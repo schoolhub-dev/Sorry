@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Формирование современного рельефа Земли — 7 класс</title>
+<style>
+:root{
+  --bg:#070a11;
+  --bg2:#0c1220;
+  --panel:#131b2c;
+  --panel2:#182238;
+  --line:#26314a;
+  --line2:#33405e;
+  --text:#e9eefb;
+  --muted:#9caecb;
+  --dim:#75879f;
+  --accent:#5aa2ff;
+  --accent2:#7ce3d4;
+  --radius:18px;
+  --shadow:0 24px 70px rgba(0,0,0,.55);
+  --font:"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  --fs:clamp(13.5px,0.82vh + 0.34vw + 4.4px,19px);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:var(--font);
+  font-size:var(--fs);
+  line-height:1.5;
+  color:var(--text);
+  background:
+    radial-gradient(1100px 700px at 12% -10%,rgba(90,162,255,.16),transparent 60%),
+    radial-gradient(900px 620px at 100% 0%,rgba(124,227,212,.12),transparent 55%),
+    radial-gradient(800px 700px at 50% 120%,rgba(167,139,250,.12),transparent 60%),
+    linear-gradient(180deg,var(--bg2),var(--bg) 70%);
+  background-attachment:fixed;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+[data-tone="blue"]{--c1:#4b8dfb;--c2:#0c2a63;--ac:#4b8dfb;--soft:rgba(75,141,251,.14);--ink:#cfe0ff}
+[data-tone="cyan"]{--c1:#31d6e8;--c2:#073a4c;--ac:#31d6e8;--soft:rgba(49,214,232,.14);--ink:#cdf5fa}
+[data-tone="green"]{--c1:#3ddc9a;--c2:#0a3a2c;--ac:#3ddc9a;--soft:rgba(61,220,154,.14);--ink:#cdf6e5}
+[data-tone="amber"]{--c1:#ffc046;--c2:#5a3607;--ac:#ffc046;--soft:rgba(255,192,70,.14);--ink:#ffe9bd}
+[data-tone="orange"]{--c1:#ff7a8a;--c2:#4d1226;--ac:#ff7a8a;--soft:rgba(255,122,138,.14);--ink:#ffd7dd}
+[data-tone="violet"]{--c1:#a78bfa;--c2:#2e1a66;--ac:#a78bfa;--soft:rgba(167,139,250,.14);--ink:#e2d9ff}
+[data-tone="slate"]{--c1:#93a7c4;--c2:#1e2938;--ac:#93a7c4;--soft:rgba(147,167,196,.14);--ink:#dfe8f5}
+
+.appbar{
+  flex:0 0 auto;
+  display:flex;align-items:center;gap:1rem;
+  padding:.65rem clamp(.8rem,2vw,1.6rem);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  background:rgba(8,12,20,.72);
+  backdrop-filter:blur(10px);
+  position:relative;z-index:5;
+}
+.brand{display:flex;align-items:center;gap:.65rem;min-width:0}
+.brand-mark{
+  width:34px;height:34px;flex:0 0 auto;border-radius:11px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:grid;place-items:center;color:#06121f;font-weight:800;font-size:.95rem;
+  box-shadow:0 6px 18px rgba(90,162,255,.35);
+}
+.brand-text{min-width:0}
+.brand-title{font-weight:700;font-size:.95rem;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-sub{font-size:.74rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spacer{flex:1 1 auto}
+.btn{
+  font:inherit;font-size:.82rem;font-weight:600;
+  color:var(--text);background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--line2);border-radius:11px;
+  padding:.5rem .85rem;cursor:pointer;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:.45rem;
+  transition:transform .12s ease,border-color .2s ease,background .2s ease;
+}
+.btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent),#3f6fe0);
+  border-color:transparent;color:#05101f;box-shadow:0 8px 22px rgba(90,162,255,.3)
+}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn[aria-pressed="true"]{border-color:var(--accent2);color:var(--accent2)}
+
+.deck{
+  flex:1 1 auto;position:relative;min-height:0;
+  padding:clamp(.7rem,1.6vw,1.5rem) clamp(.7rem,2.2vw,2rem);
+  display:flex;
+}
+.stage{position:relative;flex:1 1 auto;min-width:0;display:flex}
+.slide{
+  display:none;
+  position:relative;
+  flex:1 1 auto;
+  width:100%;
+  min-height:0;
+  flex-direction:column;
+  gap:clamp(.7rem,1.4vh,1.2rem);
+  padding:clamp(1.1rem,2.4vw,2.4rem);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 40%),
+    linear-gradient(180deg,var(--panel),#0f1626);
+  border:1px solid var(--line);
+  border-radius:calc(var(--radius) + 6px);
+  box-shadow:var(--shadow);
+  overflow:auto;
+  scrollbar-width:thin;scrollbar-color:var(--line2) transparent;
+}
+.slide::-webkit-scrollbar{width:9px;height:9px}
+.slide::-webkit-scrollbar-thumb{background:var(--line2);border-radius:9px}
+.slide.is-active{display:flex}
+.slide.enter-next{animation:enterNext .42s cubic-bezier(.22,.8,.3,1) both}
+.slide.enter-prev{animation:enterPrev .42s cubic-bezier(.22,.8,.3,1) both}
+@keyframes enterNext{from{opacity:0;transform:translateX(3.5%) scale(.985)}to{opacity:1;transform:none}}
+@keyframes enterPrev{from{opacity:0;transform:translateX(-3.5%) scale(.985)}to{opacity:1;transform:none}}
+.slide::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--t-c,var(--accent)),transparent);
+}
+
+.slide-head{display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap}
+.head-main{min-width:0;flex:1 1 340px}
+.kicker{
+  display:inline-flex;align-items:center;gap:.5rem;
+  font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--k,var(--accent));
+  margin-bottom:.4rem;
+}
+.kicker::before{content:"";width:22px;height:2px;border-radius:2px;background:currentColor;opacity:.7}
+h1,h2,h3{margin:0;line-height:1.14;letter-spacing:-.01em}
+h2{font-size:clamp(1.25rem,2.1vw,2.15rem)}
+.slide-num{
+  font-size:clamp(1.6rem,3vw,2.6rem);font-weight:800;color:rgba(255,255,255,.13);
+  line-height:1;letter-spacing:-.02em
+}
+.lead{margin:.45rem 0 0;color:var(--muted);font-size:.95rem;max-width:70ch}
+
+.body{flex:1 1 auto;display:grid;gap:clamp(.7rem,1.4vw,1.15rem);min-height:0;align-items:start}
+.layout-side{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.layout-stack{grid-template-columns:minmax(0,1fr)}
+.layout-hero{grid-template-columns:minmax(0,1fr)}
+.layout-compare{grid-template-columns:repeat(2,minmax(0,1fr))}
+.col{display:flex;flex-direction:column;gap:clamp(.55rem,1.1vh,.9rem);min-width:0}
+
+.cards{display:grid;gap:clamp(.5rem,.9vh,.75rem)}
+.cards.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.cards.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid var(--line);
+  border-left:3px solid var(--ac,var(--accent));
+  border-radius:13px;
+  padding:.6rem .8rem;
+}
+.card h3{font-size:.94rem;color:var(--ink,#fff);margin-bottom:.2rem}
+.card p{margin:0;font-size:.86rem;color:var(--muted);line-height:1.45}
+.card ul{margin:.15rem 0 0;padding-left:1.05rem;font-size:.85rem;color:var(--muted)}
+.card li{margin:.12rem 0}
+.card li::marker{color:var(--ac,var(--accent))}
+
+.facts{display:flex;flex-wrap:wrap;gap:.45rem}
+.fact{
+  display:flex;flex-direction:column;gap:.05rem;
+  background:rgba(255,255,255,.035);border:1px dashed var(--line2);
+  border-radius:11px;padding:.4rem .6rem;min-width:6.5rem;flex:1 1 6.5rem
+}
+.fact b{font-size:.95rem;color:var(--k,var(--accent));letter-spacing:-.01em}
+.fact span{font-size:.72rem;color:var(--dim);line-height:1.3}
+
+.tasks{
+  background:linear-gradient(180deg,rgba(255,192,70,.09),rgba(255,192,70,.02));
+  border:1px solid rgba(255,192,70,.32);border-radius:13px;padding:.65rem .85rem
+}
+.tasks h3{font-size:.92rem;color:#ffd88a;margin-bottom:.35rem}
+.tasks ol{margin:0;padding-left:1.25rem;font-size:.85rem;color:var(--muted)}
+.tasks li{margin:.18rem 0}
+
+.figs{display:grid;gap:clamp(.5rem,.9vw,.8rem);align-items:stretch}
+.layout-stack .figs,.layout-hero .figs{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.layout-side .figs{grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:1fr}
+.fig{margin:0;display:flex;flex-direction:column;gap:.3rem;min-width:0;height:100%}
+.fig-box{
+  position:relative;overflow:hidden;
+  flex:1 1 auto;
+  min-height:clamp(78px,15vh,150px);
+  max-height:clamp(110px,27vh,220px);
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  background:linear-gradient(135deg,var(--c1,#4b8dfb),var(--c2,#0c2a63));
+  display:grid;place-items:center;
+}
+.fig-box::after{
+  content:"";position:absolute;inset:0;
+  background:
+    repeating-linear-gradient(135deg,rgba(255,255,255,.10) 0 2px,transparent 2px 12px),
+    radial-gradient(circle at 78% 18%,rgba(255,255,255,.28),transparent 55%);
+}
+.fig-box::before{
+  content:"";position:absolute;inset:9px;border:2px dashed rgba(255,255,255,.34);border-radius:9px
+}
+.fig-label{
+  position:relative;z-index:1;text-align:center;
+  font-size:clamp(.78rem,1.1vw,1.02rem);font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.55);
+  padding:.3rem 1.2rem
+}
+.fig-cap{font-size:.78rem;color:var(--dim);line-height:1.35}
+
+.panels{display:contents}
+.panel{
+  display:flex;flex-direction:column;gap:.55rem;
+  background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
+  border:1px solid var(--line);border-top:3px solid var(--ac,var(--accent));
+  border-radius:15px;padding:.8rem .9rem
+}
+.panel-head{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+.panel-head h3{font-size:1.02rem;color:var(--ink,#fff)}
+.tag{
+  font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:.15rem .5rem;border-radius:99px;
+  background:var(--soft,rgba(255,255,255,.1));color:var(--ac,var(--accent));
+  border:1px solid rgba(255,255,255,.18)
+}
+.panel ul{margin:0;padding-left:1.05rem;font-size:.85rem;color:var(--muted)}
+.panel li{margin:.2rem 0}
+.panel li::marker{color:var(--ac,var(--accent))}
+
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{
+  font-size:.76rem;color:var(--muted);
+  background:rgba(255,255,255,.04);border:1px solid var(--line);
+  border-radius:99px;padding:.25rem .6rem
+}
+.note{margin:0;font-size:.76rem;color:var(--dim);font-style:italic}
+
+.hero{
+  flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;gap:.9rem;
+  text-align:center;align-items:center
+}
+.hero .lead{max-width:62ch;margin-inline:auto;font-size:1rem}
+h1.hero-title{
+  font-size:clamp(1.7rem,4.3vw,3.9rem);
+  background:linear-gradient(120deg,#ffffff,var(--accent2) 55%,var(--accent));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  max-width:22ch
+}
+.hero-line{width:min(420px,70%);height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.hero-meta{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center}
+.badge{
+  font-size:.74rem;color:var(--accent2);background:rgba(124,227,212,.08);
+  border:1px solid rgba(124,227,212,.3);border-radius:99px;padding:.28rem .7rem
+}
+
+.navbar{
+  flex:0 0 auto;
+  display:flex;align-items:center;gap:clamp(.5rem,1.6vw,1.2rem);
+  padding:.55rem clamp(.8rem,2vw,1.6rem);
+  border-top:1px solid rgba(255,255,255,.07);
+  background:rgba(8,12,20,.75);backdrop-filter:blur(10px);
+}
+.nav-btn{
+  width:42px;height:42px;flex:0 0 auto;border-radius:13px;
+  display:grid;place-items:center;font-size:1.1rem;
+  color:var(--text);background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--line2);cursor:pointer;
+  transition:transform .12s ease,border-color .2s ease,opacity .2s ease
+}
+.nav-btn:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+.nav-btn:disabled{opacity:.32;cursor:not-allowed}
+.dots{display:flex;align-items:center;gap:.35rem;flex:1 1 auto;justify-content:center;flex-wrap:wrap}
+.dot{
+  width:11px;height:11px;padding:0;border-radius:50%;
+  border:1px solid var(--line2);background:rgba(255,255,255,.1);cursor:pointer;
+  transition:all .2s ease
+}
+.dot:hover{background:rgba(255,255,255,.25)}
+.dot.on{width:26px;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-color:transparent}
+.counter{font-variant-numeric:tabular-nums;font-size:.85rem;color:var(--muted);white-space:nowrap}
+.counter b{color:var(--text);font-size:1rem}
+.hint{font-size:.74rem;color:var(--dim);white-space:nowrap}
+.progress{position:absolute;left:0;bottom:-1px;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease;border-radius:0 2px 2px 0}
+
+.toast{
+  position:fixed;left:50%;bottom:88px;transform:translate(-50%,16px);
+  background:rgba(19,27,44,.96);border:1px solid var(--line2);border-radius:12px;
+  padding:.6rem 1rem;font-size:.82rem;color:var(--text);box-shadow:var(--shadow);
+  opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:20;max-width:90vw
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-height:820px) and (min-width:761px){
+  .appbar{padding:.4rem clamp(.7rem,1.6vw,1.2rem)}
+  .navbar{padding:.35rem clamp(.7rem,1.6vw,1.2rem)}
+  .nav-btn{width:36px;height:36px;border-radius:11px;font-size:1rem}
+  .deck{padding:clamp(.5rem,1.2vw,1rem)}
+  .slide{padding:clamp(.75rem,1.6vw,1.4rem);gap:clamp(.45rem,.9vh,.75rem)}
+  .slide-num{font-size:clamp(1.2rem,2vw,1.8rem)}
+  .fig-box{min-height:60px;max-height:132px}
+  .fig-label{font-size:clamp(.7rem,.92vw,.86rem)}
+  .fig-cap{font-size:.7rem}
+  .card{padding:.4rem .6rem}
+  .card h3{font-size:.85rem}
+  .card p,.card li{font-size:.77rem}
+  .panel{padding:.55rem .65rem}
+  .panel ul,.tasks ol{font-size:.77rem}
+  .tasks{padding:.45rem .65rem}
+  .lead{font-size:.83rem;margin-top:.28rem}
+  .facts{gap:.3rem}
+  .fact{padding:.3rem .5rem}
+  .fact b{font-size:.86rem}
+  .fact span{font-size:.68rem}
+  .hero{gap:.6rem}
+  h1.hero-title{font-size:clamp(1.5rem,3.4vw,2.8rem)}
+  .note{font-size:.7rem}
+}
+@media (max-width:1100px){
+  .layout-side{grid-template-columns:minmax(0,1fr)}
+  .layout-side .figs{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+  .cards.three{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:760px){
+  body{overflow:auto}
+  .deck{padding:.6rem}
+  .layout-compare{grid-template-columns:minmax(0,1fr)}
+  .cards.two,.cards.three{grid-template-columns:minmax(0,1fr)}
+  .brand-sub,.hint{display:none}
+  .slide{overflow:visible}
+  .fig-box{min-height:84px;max-height:200px}
+}
+@media (max-width:520px){
+  .slide-num{display:none}
+  .nav-btn{width:38px;height:38px}
+  .btn span.lbl{display:none}
+}
+
+@media print{
+  @page{size:A4 landscape;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff !important;color:#0d1420}
+  body{background:#fff !important;display:block !important}
+  .appbar,.navbar,.toast,.progress{display:none !important}
+  .deck{display:block !important;padding:0 !important;position:static !important}
+  .stage{display:block !important;position:static !important}
+  .slide,.slide.is-active{
+    display:flex !important;position:static !important;
+    animation:none !important;opacity:1 !important;transform:none !important;
+    height:186mm;max-height:186mm;overflow:hidden;
+    margin:12mm auto;width:273mm;
+    font-size:11pt;line-height:1.4;
+    page-break-after:always;break-after:page;
+    background:#fff !important;color:#0d1420 !important;
+    border:1px solid #c8d2e2 !important;box-shadow:none !important;
+    border-radius:8px;
+  }
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .slide::before{background:#0d1420}
+  .card,.panel,.tasks,.fact,.chip{
+    background:#f5f8fd !important;border-color:#ccd6e6 !important;
+    border-left-color:#41547a !important;border-top-color:#41547a !important
+  }
+  .tag{background:#eaf0fa !important;border-color:#a9b8d1 !important;color:#2b3b5c !important;font-size:8.5pt}
+  h1.hero-title{font-size:30pt;color:#0d1420 !important;background:none !important;-webkit-text-fill-color:#0d1420}
+  h2{font-size:21pt}
+  .kicker,.slide-num{color:#41547a !important;font-size:9pt}
+  .lead{font-size:11.5pt;color:#33415c !important}
+  .card h3,.panel h3,.tasks h3{font-size:12.5pt;color:#0d1420 !important}
+  .card p,.card li,.panel li,.tasks li{font-size:10.5pt;color:#33415c !important}
+  .fact b{font-size:12pt;color:#22406e !important}
+  .fact span,.fig-cap,.note{font-size:9.5pt;color:#4a5a74 !important}
+  .chip{font-size:9.5pt;color:#33415c !important}
+  .badge{color:#1d4c46 !important;background:#e8f6f4 !important;border-color:#9fcfc7 !important}
+  .fig-box{border:1.5px dashed #a9b8d1 !important;background:#f2f6fc !important}
+  .fig-box::before{border-color:#bcc9de !important}
+  .fig-label{color:#41547a !important;text-shadow:none !important;font-size:13pt}
+  .fig-box::after{background:none}
+  .hero-title{max-width:none}
+  .nav-btn{display:none !important}
+  .cards{gap:.4rem !important}
+  .card{padding:.4rem .6rem !important}
+  .panel{padding:.55rem .7rem !important}
+  .tasks{padding:.5rem .7rem !important}
+  .tasks li,.card li,.panel li{margin:.09rem 0}
+  .chips,.facts{gap:.28rem !important}
+  .chip,.fact{padding:.18rem .45rem !important}
+  .slide{gap:.5rem !important}
+  .slide-head{gap:.6rem}
+}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <div class="brand">
+    <div class="brand-mark">7</div>
+    <div class="brand-text">
+      <div class="brand-title">Формирование современного рельефа Земли</div>
+      <div class="brand-sub">География · 7 класс · раздел «Рельеф Земли»</div>
+    </div>
+  </div>
+  <div class="spacer"></div>
+  <button class="btn" id="btnFull" aria-pressed="false" title="Полный экран (F)">⛶ Полный экран</button>
+  <button class="btn btn-primary" id="btnPdf" title="Печать / сохранение в PDF (P)">⎙ Скачать PDF</button>
+  <div class="progress" id="progress" style="width:0"></div>
+</header>
+
+<main class="deck">
+  <div class="stage" id="stage"></div>
+</main>
+
+<footer class="navbar">
+  <button class="nav-btn" id="btnPrev" aria-label="Предыдущий слайд">‹</button>
+  <button class="nav-btn" id="btnNext" aria-label="Следующий слайд">›</button>
+  <div class="dots" id="dots"></div>
+  <div class="counter"><b id="cur">1</b> / <span id="total">10</span></div>
+  <div class="hint">← → листать · F — во весь экран · P — PDF</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SLIDES = [
+  {
+    layout: "hero",
+    tone: "blue",
+    kicker: "География · 7 класс · раздел «Рельеф Земли»",
+    title: "Формирование современного рельефа Земли",
+    lead: "Современная поверхность планеты — результат работы двух групп сил: внутренних (эндогенных) и внешних (экзогенных). Разберём, как они создают, разрушают и меняют рельеф прямо сейчас.",
+    chips: ["10 слайдов", "Внутренние силы", "Внешние силы", "Итоги и вопросы"],
+    figures: [
+      { box: "Горы", cap: "Складчатые горы — молодые, высокие, растут быстро." },
+      { box: "Равнины", cap: "Платформенные равнины — древние, выровненные поверхности." },
+      { box: "Впадины", cap: "Котловины и грабены — зоны тектонического опускания." }
+    ]
+  },
+  {
+    layout: "side",
+    tone: "cyan",
+    kicker: "Основные понятия",
+    title: "Что такое рельеф",
+    lead: "Рельеф — совокупность всех неровностей земной поверхности. По размеру форм его делят на несколько групп.",
+    cards: [
+      { t: "Макрорельеф", d: "Крупные формы: горные системы, равнины, плато, впадины. Виден на картах любого масштаба." },
+      { t: "Мезорельеф", d: "Средние формы: холмы, гряды, ущелья, речные долины, террасы." },
+      { t: "Микрорельеф", d: "Мелкие формы: песчаная рябь, бугры, каменная россыпь, промоины, кочки." },
+      { t: "Зачем это знать", d: "По рельефу судят о внутренних и внешних процессах: как поднимались и разрушались породы." }
+    ],
+    facts: [
+      { v: "8 849 м", k: "Эверест — высшая точка суши" },
+      { v: "11 034 м", k: "Марианская впадина — ниже уровня океана" },
+      { v: "≈ 840 м", k: "средняя высота суши над океаном" }
+    ],
+    figures: [
+      { box: "Формы рельефа", cap: "От макроформ (горы, равнины) до микроформ (рябь, россыпь)." },
+      { box: "Высоты суши", cap: "Большая часть суши — ниже 1000 м; горы занимают около четверти суши." }
+    ],
+    note: "Площадь суши — около 29% поверхности Земли, остальное — океан."
+  },
+  {
+    layout: "compare",
+    tone: "violet",
+    kicker: "Главная идея урока",
+    title: "Два источника формирования рельефа",
+    lead: "Все процессы, изменяющие поверхность Земли, делят на две группы по источнику энергии.",
+    panels: [
+      {
+        tone: "blue",
+        title: "Внутренние силы",
+        tag: "эндогенные",
+        items: [
+          "Тектонические движения — медленные и быстрые",
+          "Вулканизм — излияния магмы на поверхность",
+          "Землетрясения — разрушение горных пород"
+        ],
+        figure: { box: "Эндогенные процессы", cap: "Источник энергии — внутреннее тепло Земли: подъём, опускание, извержение вулканов." }
+      },
+      {
+        tone: "green",
+        title: "Внешние силы",
+        tag: "экзогенные",
+        items: [
+          "Выветривание — разрушение пород на месте",
+          "Текучие и подземные воды — эрозия и отложения",
+          "Ледники, море и ветер — снос и накопление"
+        ],
+        figure: { box: "Экзогенные процессы", cap: "Источник энергии — Солнце и сила тяжести: разрушают, переносят и откладывают породы." }
+      }
+    ],
+    note: "Внутренние силы создают крупные формы рельефа, внешние — разрушают и выравнивают их. В природе работают одновременно."
+  },
+  {
+    layout: "side",
+    tone: "orange",
+    kicker: "Внутренние силы · часть 1",
+    title: "Тектонические движения и землетрясения",
+    lead: "Плиты земной коры движутся со скоростью 2–10 см в год — медленно, но непрерывно.",
+    cards: [
+      { t: "Медленные движения", d: "Плавное поднятие одних участков и опускание других. Заметны на картах и приборах: Скандинавия поднимается примерно на 1 м за 100 лет." },
+      { t: "Поднятие", d: "Горные системы и высокие равнины: Кавказ, Алтай, Памир, Балтийский щит." },
+      { t: "Опускание", d: "Низменности и впадины: Прикаспийская, Западно-Сибирская, Черноморская котловины." },
+      { t: "Быстрые движения", d: "Разрывы пород с толчком — землетрясения. Очаг — в глубине, эпицентр — на поверхности. Самые сильные — в Тихоокеанском поясе." }
+    ],
+    facts: [
+      { v: "2–10 см/год", k: "скорость движения плит" },
+      { v: "80 %", k: "землетрясений — в Тихоокеанском поясе" },
+      { v: "≈1 м", k: "подъём Скандинавии за 100 лет" }
+    ],
+    figures: [
+      { box: "Плиты и щиты", cap: "Щит — древняя устойчивая платформа, поднимается медленно." },
+      { box: "Грабен", cap: "Провал между разломами: озёра Карелии, впадина Ньяса." }
+    ]
+  },
+  {
+    layout: "side",
+    tone: "orange",
+    kicker: "Внутренние силы · часть 2",
+    title: "Вулканизм — рождение новых гор",
+    lead: "Магма поднимается по магматическому каналу к жерлу и изливается на поверхность.",
+    cards: [
+      { t: "Где вулканы", d: "На границах плит и в ослабленных зонах: Тихоокеанское «Огненное кольцо», Средиземноморский пояс, Исландия." },
+      { t: "Как образуются горы", d: "Магма насыщается газами, вспучивается и образует конус. Пепел, лава и обломки накапливаются слоями." },
+      { t: "Формы вулканов", d: "Конусные (Ключевская), щитовые пологие вулканы, вулканические равнины и острова (Гавайи), гейзеры и горячие источники." },
+      { t: "Значение", d: "Вулканические почвы богаты минеральными веществами: Камчатка, Курилы, побережье Чёрного моря — чай и виноградники." }
+    ],
+    facts: [
+      { v: "15–20 км", k: "глубина, с которой поднимается магма" },
+      { v: "1 000+", k: "действующих вулканов на Земле" },
+      { v: "5 646 м", k: "Эльбрус — высший вулкан планеты" }
+    ],
+    figures: [
+      { box: "Схема: жерло", cap: "Магматический канал → жерло → конус из лавы и пепла." },
+      { box: "Типы вулканов", cap: "Конусной, щитовой, вулканическое плато — форма зависит от типа извержения." }
+    ]
+  },
+  {
+    layout: "side",
+    tone: "amber",
+    kicker: "Внешние силы · часть 1",
+    title: "Выветривание: разрушение на месте",
+    lead: "Выветривание — процесс разрушения горных пород под действием воздуха, воды, смены температур и организмов.",
+    cards: [
+      { t: "Физическое", d: "Колебания температуры расширяют и сжимают породы, вода замерзает в трещинах и раскалывает их, выветривание корней раздвигает камни." },
+      { t: "Химическое", d: "Растворение (известняк → карстовые формы), окисление (железо → ржавчина), действие углекислоты и гуминовых кислот почвы." },
+      { t: "Биологическое", d: "Корни деревьев, мхи, лишайники, бактерии разрушают и химически изменяют породы." },
+      { t: "Результат", d: "Обломки скатываются вниз по склону, образуя осыпи. При длительном выветривании возникают месторождения: россыпи золота, алмазов, олова." }
+    ],
+    facts: [
+      { v: "День и ночь", k: "главный разрушитель скал" },
+      { v: "2–3 см/год", k: "скорость отступания берега у подножия скал" }
+    ],
+    figures: [
+      { box: "Схема: трещина", cap: "Трещина → замерзание воды → обломок → осыпь вниз по склону." },
+      { box: "Карст", cap: "Растворение известняков → воронки, пещеры, сталактиты и сталагмиты (Кавказ, Урал)." }
+    ],
+    note: "Выветривание — самый медленный, но самый распространённый внешний процесс: он работает везде и постоянно."
+  },
+  {
+    layout: "side",
+    tone: "blue",
+    kicker: "Внешние силы · часть 2",
+    title: "Деятельность текучих вод",
+    lead: "Вода — самый сильный из внешних факторов: она разрушает породы, переносит обломки и откладывает их как новые толщи.",
+cards: [
+      { t: "Эрозия (разрушение)", d: "Вода уносит грунт и породы вниз по течению. Сначала появляются овраги, они растут и превращаются в балки и широкие долины." },
+      { t: "Транспорт", d: "Обломки переносятся водами рек. Равнинные реки текут спокойно и петляют — образуются излучины и меандры." },
+      { t: "Аккумуляция (отложения)", d: "Наносы заполняют поймы, образуют дельты (Волга, Обь, Нил, Меконг), пляжи и равнины выравнивания." },
+      { t: "Речные террасы", d: "Ступени на склонах долин — следы прошлых уровней русла: признак длительного развития долины." }
+    ],
+    facts: [
+      { v: "2/3", k: "рек питаются подземными водами" },
+      { v: "1 642 м", k: "глубина Байкала — тектон + ледник" }
+    ],
+    figures: [
+      { box: "Речная долина", cap: "Пойма — коренная терраса – склон. Внизу русло с косой и водоворотом." },
+      { box: "Дельта", cap: "В устьях рек море получает аллювий: приподнятые песчаные острова." }
+    ],
+    note: "Термин: денудация — общий размыв и снос материала суши водами и ветром."
+  },
+  {
+    layout: "stack",
+    tone: "cyan",
+    kicker: "Внешние силы · часть 3",
+    title: "Ледники, море и ветер",
+    lead: "Остальные внешние силы работают вместе с водой: ледники и волны создают резкие формы, ветер подтачивает и переносит пески.",
+    cardsClass: "three",
+    cards: [
+      { t: "Ледниковая эрозия", d: "Ледник, как гигантская планета, выпаливает и уносит породы. Возникают цирки, кары, троги, U-образные долины. В конце ледника остаётся морена — валы обломков и валуны.", },
+      { t: "Морская эрозия", d: "Абразия — волны подтачивают берег: образуются обрывы, каменные пляжи, гроты. Наносы образуют косы и пляжи.", },
+      { t: "Работа ветра", d: "Корразия в засушливых районах. Ветер гонит песок в дюны, барханы, «камни-следопыты». За год песок может переместиться на десятки метров.", }
+    ],
+    figures: [
+      { box: "Ледник", cap: "Цирк и кар под склоном; ледник спускается по ущелью." },
+      { box: "Море", cap: "Волны подтачивают берег — абразия." },
+      { box: "Пустыня", cap: "Дюны и барханы постоянно меняют форму." }
+    ],
+    note: "Все внешние силы дополняют друг друга: вода готовит материал, ветер и ледник переносят его дальше."
+  },
+  {
+    layout: "stack",
+    tone: "green",
+    kicker: "Синтез",
+    title: "Современный рельеф: итог взаимодействия",
+    lead: "Современный рельеф — не «застывший» результат прошлого, а результат непрерывной работы внутренних и внешних сил.",
+    cardsClass: "two",
+    cards: [
+      { t: "Равнины", d: "Плиты и щиты: Русская, Западно-Сибирская равнины, Канадские высоты. Древние поверхности, долго выровненные." },
+      { t: "Горы", d: "Молодые — Гималаи, Анды, Кавказ, Японские острова: активная тектоника. Древние, разрушенные — Урал, Балканы." },
+      { t: "Выровненный рельеф", d: "Следствие сноса гор породами: Ла-Паш, Среднерусская возвышенность. Между низменными равнинами остаются холмы-останцы." },
+      { t: "Рельеф меняется сейчас", d: "Скорость подъема гор — до 10 см/год (Гималаи). Тектоника, ледники и реки продолжают перестраивать поверхность планеты." }
+    ],
+    figures: [
+      { box: "Схема: круговорот", cap: "Внутренние силы → разрушение и снос → осаждение → новый подъём. Круговорот продолжается миллионы лет." },
+      { box: "Карта форм", cap: "Горы приурочены к тектоническим поясам, равнины — к плитам и щитам." }
+    ]
+  },
+  {
+    layout: "side",
+    tone: "violet",
+    kicker: "Итоги урока",
+    title: "Выводы и проверка",
+    lead: "Проверьте себя: ответьте на вопросы после повторения слайдов.",
+    cards: [
+      { t: "Вывод 1", d: "Рельеф формируется при одновременной работе эндогенных (внутренних) и экзогенных (внешних) сил." },
+      { t: "Вывод 2", d: "Внутренние силы: тектоника, вулканизм, землетрясения — создают и поднимают крупные формы." },
+      { t: "Вывод 3", d: "Внешние силы: выветривание, вода, лёд, море, ветер — разрушают, переносят и откладывают породы, выравнивая рельеф." },
+      { t: "Вывод 4", d: "Современный рельеф — живая, постоянно меняющаяся система, изучаемая по картам и данным наблюдений." }
+    ],
+    tasks: [
+      "Назовите две группы сил, формирующих рельеф. Приведите по два процесса из каждой группы.",
+      "Какие формы рельефа возникают при опускании участка земной коры?",
+      "Назовите ледниковые и карстовые формы рельефа. Чем они отличаются?",
+      "Какие горные системы на карте относятся к складчатым и молодым?",
+      "Почему вулканические почвы считаются плодородными, а горные вершины — высокими?"
+    ],
+    chips: ["рельеф", "эндогенные силы", "экзогенные силы", "денудация", "аккумуляция", "абразия", "карст", "морена", "терраса", "габен"],
+    note: "Готово. Используйте клавиши ← → или кнопки со стрелками; «Скачать PDF» печатает все 10 слайдов в альбомной ориентации."
+  }
+];
+
+const stage = document.getElementById("stage");
+const dotsBox = document.getElementById("dots");
+const elCur = document.getElementById("cur");
+const elTotal = document.getElementById("total");
+const elProgress = document.getElementById("progress");
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const btnPdf = document.getElementById("btnPdf");
+const btnFull = document.getElementById("btnFull");
+const toastEl = document.getElementById("toast");
+
+let idx = 0;
+let dir = 1;
+
+function toneOf(s){ return s.tone || "blue"; }
+
+function cardHtml(c, tone){
+  const t = c.tone || tone;
+  const items = Array.isArray(c.items)
+    ? "<ul>" + c.items.map(function(i){ return "<li>" + i + "</li>"; }).join("") + "</ul>"
+    : "<p>" + c.d + "</p>";
+  return '<article class="card" data-tone="' + t + '"><h3>' + c.t + "</h3>" + items + "</article>";
+}
+
+function figsHtml(list, tone){
+  if (!list || !list.length) return "";
+  return '<div class="figs">' + list.map(function(f){
+    return '<figure class="fig" data-tone="' + (f.tone || tone) + '">' +
+      '<div class="fig-box"><span class="fig-label">' + f.box + "</span></div>" +
+      "<figcaption class=\"fig-cap\">" + f.cap + "</figcaption></figure>";
+  }).join("") + "</div>";
+}
+
+function factsHtml(list, tone){
+  if (!list || !list.length) return "";
+  const real = list.filter(function(f){ return f.k; });
+  if (!real.length) return "";
+  return '<div class="facts" data-tone="' + tone + '">' + real.map(function(f){
+    return '<div class="fact"><b>' + f.v + "</b><span>" + f.k + "</span></div>";
+  }).join("") + "</div>";
+}
+
+function panelHtml(p){
+  return '<section class="panel" data-tone="' + p.tone + '">' +
+    '<div class="panel-head"><h3>' + p.title + '</h3><span class="tag">' + p.tag + "</span></div>" +
+    "<ul>" + p.items.map(function(i){ return "<li>" + i + "</li>"; }).join("") + "</ul>" +
+    figsHtml([p.figure], p.tone) +
+    "</section>";
+}
+
+function slideHtml(s, i){
+  const tone = toneOf(s);
+  let body = "";
+  if (s.layout === "hero") {
+    body = '<div class="body layout-hero">' +
+      '<div class="hero">' +
+        '<div class="kicker">' + s.kicker + "</div>" +
+        '<h1 class="hero-title">' + s.title + "</h1>" +
+        '<div class="hero-line"></div>' +
+        '<p class="lead">' + s.lead + "</p>" +
+        '<div class="hero-meta">' + (s.chips || []).map(function(c){
+          return '<span class="badge">' + c + "</span>";
+        }).join("") + "</div>" +
+      "</div>" + figsHtml(s.figures, tone) + "</div>";
+  } else if (s.layout === "compare") {
+    body = '<div class="body layout-compare">' + s.panels.map(panelHtml).join("") + "</div>";
+  } else if (s.layout === "stack") {
+    body = '<div class="body layout-stack"><div class="col">' +
+      '<div class="cards ' + (s.cardsClass || "two") + '">' + (s.cards || []).map(function(c){
+        return cardHtml(c, tone);
+      }).join("") + "</div>" + figsHtml(s.figures, tone) + "</div></div>";
+  } else {
+    body = '<div class="body layout-side">' +
+      '<div class="col"><div class="cards">' + (s.cards || []).map(function(c){
+        return cardHtml(c, tone);
+      }).join("") + "</div>" + factsHtml(s.facts, tone) + "</div>" +
+      '<div class="col">' + figsHtml(s.figures, tone) + (s.tasks ?
+        '<div class="tasks"><h3>Вопросы для повторения</h3><ol>' + s.tasks.map(function(q){
+          return "<li>" + q + "</li>";
+        }).join("") + "</ol></div>" : "") + (s.chips ?
+        '<div class="chips">' + s.chips.map(function(c){
+          return '<span class="chip">' + c + "</span>";
+        }).join("") + "</div>" : "") + "</div></div>";
+  }
+
+  const noteRow = s.note ? '<p class="note">' + s.note + "</p>" : "";
+
+  return '<section class="slide" data-tone="' + tone + '" id="slide-' + (i + 1) + '"' +
+    ' style="--t-c:var(--ac);--k:var(--ac)" role="group" aria-roledescription="слайд" aria-label="Слайд ' + (i + 1) + ' из 10">' +
+    (s.layout === "hero" ? "" :
+      '<div class="slide-head"><div class="head-main"><div class="kicker">' + s.kicker + "</div>" +
+      "<h2>" + s.title + "</h2>" + (s.lead ? '<p class="lead">' + s.lead + "</p>" : "") +
+      "</div><div class=\"slide-num\">" + String(i + 1).padStart(2, "0") + "</div></div>") +
+    body + noteRow + "</section>";
+}
+
+stage.innerHTML = SLIDES.map(slideHtml).join("");
+elTotal.textContent = SLIDES.length;
+dotsBox.innerHTML = SLIDES.map(function(s, i){
+  return '<button class="dot" data-i="' + i + '" title="Слайд ' + (i + 1) + '"></button>';
+}).join("");
+
+const slideEls = Array.prototype.slice.call(stage.querySelectorAll(".slide"));
+const dotEls = Array.prototype.slice.call(dotsBox.querySelectorAll(".dot"));
+
+function go(n, d){
+  const next = Math.max(0, Math.min(SLIDES.length - 1, n));
+  dir = d === undefined ? (next >= idx ? 1 : -1) : d;
+  idx = next;
+  slideEls.forEach(function(el, i){
+    el.classList.remove("enter-next", "enter-prev");
+    if (i === idx) {
+      el.classList.add("is-active", dir >= 0 ? "enter-next" : "enter-prev");
+      el.scrollTop = 0;
+    } else {
+      el.classList.remove("is-active");
+    }
+    el.setAttribute("aria-hidden", i === idx ? "false" : "true");
+  });
+  dotEls.forEach(function(d2, i){ d2.classList.toggle("on", i === idx); });
+  elCur.textContent = idx + 1;
+  elProgress.style.width = ((idx + 1) / SLIDES.length * 100) + "%";
+  btnPrev.disabled = idx === 0;
+  btnNext.disabled = idx === SLIDES.length - 1;
+  history.replaceState(null, "", "#slide-" + (idx + 1));
+}
+
+function next(){ if (idx < SLIDES.length - 1) go(idx + 1, 1); }
+function prev(){ if (idx > 0) go(idx - 1, -1); }
+
+btnNext.addEventListener("click", next);
+btnPrev.addEventListener("click", prev);
+dotsBox.addEventListener("click", function(e){
+  const b = e.target.closest(".dot");
+  if (b) go(Number(b.dataset.i));
+});
+
+document.addEventListener("keydown", function(e){
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  const t = e.target;
+  const onControl = t && t.closest && t.closest("button");
+  const k = e.key;
+  const isSpace = k === " " || k === "Spacebar" || k === "Enter";
+  if ((k === "ArrowRight" || k === "ArrowDown" || k === "PageDown" || isSpace) && !(isSpace && onControl)) {
+    e.preventDefault(); next();
+  } else if (k === "ArrowLeft" || k === "ArrowUp" || k === "PageUp" || k === "Backspace") {
+    e.preventDefault(); prev();
+  } else if (k === "Home") {
+    e.preventDefault(); go(0, -1);
+  } else if (k === "End") {
+    e.preventDefault(); go(SLIDES.length - 1, 1);
+  } else if (k === "f" || k === "F" || k === "а" || k === "А") {
+    toggleFull();
+  } else if (k === "p" || k === "P" || k === "з" || k === "З") {
+    e.preventDefault(); doPrint();
+  }
+});
+
+let tX = 0, tY = 0, tT = 0;
+document.addEventListener("touchstart", function(e){
+  if (e.touches.length !== 1) return;
+  tX = e.touches[0].clientX; tY = e.touches[0].clientY; tT = e.touches[0].timeStamp;
+}, { passive: true });
+
+document.addEventListener("touchend", function(e){
+  const t = e.changedTouches[0];
+  const dx = t.clientX - tX;
+  const dy = t.clientY - tY;
+  const dt = t.timeStamp - tT;
+  if (dt > 900 || Math.abs(dx) < 45 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+  if (dx < 0) next(); else prev();
+}, { passive: true });
+
+let wheelLock = false;
+document.addEventListener("wheel", function(e){
+  if (wheelLock) return;
+  if (Math.abs(e.deltaY) < 28) return;
+  const active = slideEls[idx];
+  const atTop = active.scrollTop <= 0;
+  const atBottom = active.scrollTop + active.clientHeight >= active.scrollHeight - 1;
+  if (e.deltaY > 0 && atBottom) { wheelLock = true; next(); setTimeout(function(){ wheelLock = false; }, 520); }
+  if (e.deltaY < 0 && atTop) { wheelLock = true; prev(); setTimeout(function(){ wheelLock = false; }, 520); }
+}, { passive: true });
+
+function toggleFull(){
+  if (!document.fullscreenElement) {
+    const p = document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+    if (p && p.catch) p.catch(function(){});
+  } else if (document.exitFullscreen) {
+    document.exitFullscreen();
+  }
+}
+document.addEventListener("fullscreenchange", function(){
+  btnFull.setAttribute("aria-pressed", document.fullscreenElement ? "true" : "false");
+});
+btnFull.addEventListener("click", toggleFull);
+
+let toastTimer = null;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove("on"); }, 3600);
+}
+
+function doPrint(){
+  const wasActive = idx;
+  setTimeout(function(){
+    window.print();
+    go(wasActive, 1);
+    toast("Печать: в поле «Принтер» выберите «Сохранить как PDF», ориентация — альбомная.");
+  }, 80);
+}
+btnPdf.addEventListener("click", doPrint);
+
+const m = /^#slide-(\d+)$/.exec(location.hash || "");
+const start = m ? Math.min(SLIDES.length, Math.max(1, Number(m[1]))) - 1 : 0;
+go(start, 1);
+</script>
+</body>
+</html>
